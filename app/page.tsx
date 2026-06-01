@@ -17,14 +17,22 @@ export default function Home() {
             className="hero-image"
             fill
             priority
-            sizes="100vw"
+            // sizes="100vw"
+            // height={230}
             src="/images/miyu-hero.png"
           />
           <div className="hero-overlay" />
           <div className="hero-content">
-            <p lang="ja">毎日のニュースで学ぶ</p>
-            <h1>매일 한 편의 일본 뉴스로, 살아있는 일본어를 만나다</h1>
-            <Link className="primary-link" href={`/news/${featuredArticle.slug}`}>
+            <p lang="ja" className="text-xl">
+              毎日のニュースで学ぶ
+            </p>
+            <h1 className="">
+              매일 한 편의 일본 뉴스로, 살아있는 일본어를 만나다
+            </h1>
+            <Link
+              className="primary-link "
+              href={`/news/${featuredArticle.slug}`}
+            >
               오늘의 기사 학습하기
             </Link>
           </div>
