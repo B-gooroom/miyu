@@ -1,10 +1,15 @@
 import { redirect } from "next/navigation";
 import { Footer, Header } from "../../components/site-chrome";
-import { createSupabaseServerClient, isAllowedAdmin } from "../../lib/supabase";
+import { createSupabaseServerClient, hasSupabaseConfig, isAllowedAdmin } from "../../lib/supabase";
 import { eyebrow } from "../../lib/styles";
+import { AdminSetupNeeded } from "../setup-needed";
 import { LoginForm } from "./login-form";
 
 export default async function AdminLoginPage() {
+  if (!hasSupabaseConfig()) {
+    return <AdminSetupNeeded />;
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

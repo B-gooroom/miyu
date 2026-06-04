@@ -3,12 +3,18 @@ import { redirect } from "next/navigation";
 import { Footer, Header } from "../../../components/site-chrome";
 import {
   createSupabaseServerClient,
+  hasSupabaseConfig,
   isAllowedAdmin,
 } from "../../../lib/supabase";
 import { eyebrow, outlineButton } from "../../../lib/styles";
+import { AdminSetupNeeded } from "../../setup-needed";
 import { ArticleForm } from "./article-form";
 
 export default async function NewArticlePage() {
+  if (!hasSupabaseConfig()) {
+    return <AdminSetupNeeded />;
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

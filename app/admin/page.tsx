@@ -1,15 +1,20 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Footer, Header } from "../components/site-chrome";
-import { createSupabaseServerClient, isAllowedAdmin } from "../lib/supabase";
+import { createSupabaseServerClient, hasSupabaseConfig, isAllowedAdmin } from "../lib/supabase";
 import { eyebrow, goldButton, outlineButton } from "../lib/styles";
 import { logoutAdmin } from "./actions";
+import { AdminSetupNeeded } from "./setup-needed";
 
 export default async function AdminPage({
   searchParams,
 }: {
   searchParams: Promise<{ created?: string; error?: string; updated?: string }>;
 }) {
+  if (!hasSupabaseConfig()) {
+    return <AdminSetupNeeded />;
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

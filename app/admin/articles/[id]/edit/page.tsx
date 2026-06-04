@@ -1,13 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Footer, Header } from "../../../../components/site-chrome";
-import { createSupabaseServerClient, isAllowedAdmin } from "../../../../lib/supabase";
+import { createSupabaseServerClient, hasSupabaseConfig, isAllowedAdmin } from "../../../../lib/supabase";
 import { eyebrow, goldButton, outlineButton } from "../../../../lib/styles";
 import { updateArticleStatus } from "../../../actions";
+import { AdminSetupNeeded } from "../../../setup-needed";
 
 export default async function EditArticlePage({
   params,
 }: PageProps<"/admin/articles/[id]/edit">) {
+  if (!hasSupabaseConfig()) {
+    return <AdminSetupNeeded />;
+  }
+
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
   const {

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient, isAllowedAdmin } from "../lib/supabase";
+import { createSupabaseServerClient, hasSupabaseConfig, isAllowedAdmin } from "../lib/supabase";
 
 type ActionState = {
   error?: string;
@@ -90,6 +90,10 @@ async function createUniqueSlug(supabase: Awaited<ReturnType<typeof createSupaba
 }
 
 export async function loginAdmin(_: ActionState, formData: FormData): Promise<ActionState> {
+  if (!hasSupabaseConfig()) {
+    return { error: "Supabase 환경변수가 설정되지 않았습니다." };
+  }
+
   const email = valueOf(formData, "email");
   const password = valueOf(formData, "password");
 
@@ -113,12 +117,20 @@ export async function loginAdmin(_: ActionState, formData: FormData): Promise<Ac
 }
 
 export async function logoutAdmin() {
+  if (!hasSupabaseConfig()) {
+    redirect("/admin/login");
+  }
+
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   redirect("/admin/login");
 }
 
 export async function updateArticleStatus(formData: FormData) {
+  if (!hasSupabaseConfig()) {
+    redirect("/admin");
+  }
+
   const articleId = valueOf(formData, "article_id");
   const status = valueOf(formData, "status");
 
@@ -155,6 +167,11 @@ export async function updateArticleStatus(formData: FormData) {
 
 export async function createArticle(_: ActionState, formData: FormData): Promise<ActionState> {
   const values = articleValuesOf(formData);
+
+  if (!hasSupabaseConfig()) {
+    return { error: "Supabase 환경변수가 설정되지 않았습니다.", values };
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
